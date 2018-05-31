@@ -1,7 +1,8 @@
-var server = "http://somosmerz.com/panel_app/";
-//var server = "http://192.168.2.4/merz/";
-//var server = "http://localhost/merz/";
 var panelActivo = "";
+
+var ws_batchcodes = "http://172.10.22.5/curl.php?url=1";
+var ws_bills = "http://172.10.22.5/curl.php?url=2";
+var ws_localizations = "http://172.10.22.5/curl.php?url=3";
 
 function showPanel(panel, efecto, after){
 	duracion = 500;
@@ -115,13 +116,23 @@ var mensajes = {
 
 
 function getPlantillas(){
-	plantillas['item'] = "";
+	plantillas['codigos'] = "";
+	plantillas['itemCodigo'] = "";
 	
 	$.each(plantillas, function(pl, valor){
 		$.get("vistas/" + pl + ".tpl", function(html){
 			plantillas[pl] = html;
 		});
 	});
+	
+	var plInit = ["modal.viewCodigo"];
+	$.each(plInit, function(pl, valor){
+		$.get("vistas/" + valor + ".tpl", function(codigo){
+			$("body").append(codigo);
+		});
+	});
+	
+	return true;
 };
 
 
@@ -132,9 +143,8 @@ function getPlantillas(){
 */
 function crearBD(){
 	db.transaction(function(tx){
-		//tx.executeSql('drop table if exists tienda');
-		
-		tx.executeSql('CREATE TABLE IF NOT EXISTS codigo (idCode integer primary key, codigo text, nombre text, cantidad integer)', [], function(){
+		//tx.executeSql('drop table if exists codigo');
+		tx.executeSql('CREATE TABLE IF NOT EXISTS codigo (idCode integer primary key, codigo text, nombre text, cantidad integer, localizacion integer, factura integer)', [], function(){
 			console.log("Tabla codigo creada");
 		}, errorDB);
 		

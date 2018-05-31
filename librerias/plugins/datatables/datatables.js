@@ -4,10 +4,10 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
- *   https://datatables.net/download/#bs/dt-1.10.16/af-2.2.2/b-1.4.2/cr-1.4.1/fc-3.2.3/fh-3.1.3/kt-2.3.2/r-2.2.0/rg-1.0.2/rr-1.2.3/sc-1.4.3/sl-1.2.3
+ *   https://datatables.net/download/#dt/dt-1.10.16/af-2.2.2/b-1.5.1/cr-1.4.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5
  *
  * Included libraries:
- *   DataTables 1.10.16, AutoFill 2.2.2, Buttons 1.4.2, ColReorder 1.4.1, FixedColumns 3.2.3, FixedHeader 3.1.3, KeyTable 2.3.2, Responsive 2.2.0, RowGroup 1.0.2, RowReorder 1.2.3, Scroller 1.4.3, Select 1.2.3
+ *   DataTables 1.10.16, AutoFill 2.2.2, Buttons 1.5.1, ColReorder 1.4.1, FixedColumns 3.2.4, FixedHeader 3.1.3, KeyTable 2.3.2, Responsive 2.2.1, RowGroup 1.0.2, RowReorder 1.2.3, Scroller 1.4.4, Select 1.2.5
  */
 
 /*! DataTables 1.10.16
@@ -13847,7 +13847,7 @@
 		 *
 		 *  @type string
 		 */
-		build:"bs/dt-1.10.16/af-2.2.2/b-1.4.2/cr-1.4.1/fc-3.2.3/fh-3.1.3/kt-2.3.2/r-2.2.0/rg-1.0.2/rr-1.2.3/sc-1.4.3/sl-1.2.3",
+		build:"dt/dt-1.10.16/af-2.2.2/b-1.5.1/cr-1.4.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5",
 	
 	
 		/**
@@ -15255,190 +15255,6 @@
 }));
 
 
-/*! DataTables Bootstrap 3 integration
- * ©2011-2015 SpryMedia Ltd - datatables.net/license
- */
-
-/**
- * DataTables integration for Bootstrap 3. This requires Bootstrap 3 and
- * DataTables 1.10 or newer.
- *
- * This file sets the defaults and adds options to DataTables to style its
- * controls using Bootstrap. See http://datatables.net/manual/styling/bootstrap
- * for further information.
- */
-(function( factory ){
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( ['jquery', 'datatables.net'], function ( $ ) {
-			return factory( $, window, document );
-		} );
-	}
-	else if ( typeof exports === 'object' ) {
-		// CommonJS
-		module.exports = function (root, $) {
-			if ( ! root ) {
-				root = window;
-			}
-
-			if ( ! $ || ! $.fn.dataTable ) {
-				// Require DataTables, which attaches to jQuery, including
-				// jQuery if needed and have a $ property so we can access the
-				// jQuery object that is used
-				$ = require('datatables.net')(root, $).$;
-			}
-
-			return factory( $, root, root.document );
-		};
-	}
-	else {
-		// Browser
-		factory( jQuery, window, document );
-	}
-}(function( $, window, document, undefined ) {
-'use strict';
-var DataTable = $.fn.dataTable;
-
-
-/* Set the defaults for DataTables initialisation */
-$.extend( true, DataTable.defaults, {
-	dom:
-		"<'row'<'col-sm-6'l><'col-sm-6'f>>" +
-		"<'row'<'col-sm-12'tr>>" +
-		"<'row'<'col-sm-5'i><'col-sm-7'p>>",
-	renderer: 'bootstrap'
-} );
-
-
-/* Default class modification */
-$.extend( DataTable.ext.classes, {
-	sWrapper:      "dataTables_wrapper form-inline dt-bootstrap",
-	sFilterInput:  "form-control input-sm",
-	sLengthSelect: "form-control input-sm",
-	sProcessing:   "dataTables_processing panel panel-default"
-} );
-
-
-/* Bootstrap paging button renderer */
-DataTable.ext.renderer.pageButton.bootstrap = function ( settings, host, idx, buttons, page, pages ) {
-	var api     = new DataTable.Api( settings );
-	var classes = settings.oClasses;
-	var lang    = settings.oLanguage.oPaginate;
-	var aria = settings.oLanguage.oAria.paginate || {};
-	var btnDisplay, btnClass, counter=0;
-
-	var attach = function( container, buttons ) {
-		var i, ien, node, button;
-		var clickHandler = function ( e ) {
-			e.preventDefault();
-			if ( !$(e.currentTarget).hasClass('disabled') && api.page() != e.data.action ) {
-				api.page( e.data.action ).draw( 'page' );
-			}
-		};
-
-		for ( i=0, ien=buttons.length ; i<ien ; i++ ) {
-			button = buttons[i];
-
-			if ( $.isArray( button ) ) {
-				attach( container, button );
-			}
-			else {
-				btnDisplay = '';
-				btnClass = '';
-
-				switch ( button ) {
-					case 'ellipsis':
-						btnDisplay = '&#x2026;';
-						btnClass = 'disabled';
-						break;
-
-					case 'first':
-						btnDisplay = lang.sFirst;
-						btnClass = button + (page > 0 ?
-							'' : ' disabled');
-						break;
-
-					case 'previous':
-						btnDisplay = lang.sPrevious;
-						btnClass = button + (page > 0 ?
-							'' : ' disabled');
-						break;
-
-					case 'next':
-						btnDisplay = lang.sNext;
-						btnClass = button + (page < pages-1 ?
-							'' : ' disabled');
-						break;
-
-					case 'last':
-						btnDisplay = lang.sLast;
-						btnClass = button + (page < pages-1 ?
-							'' : ' disabled');
-						break;
-
-					default:
-						btnDisplay = button + 1;
-						btnClass = page === button ?
-							'active' : '';
-						break;
-				}
-
-				if ( btnDisplay ) {
-					node = $('<li>', {
-							'class': classes.sPageButton+' '+btnClass,
-							'id': idx === 0 && typeof button === 'string' ?
-								settings.sTableId +'_'+ button :
-								null
-						} )
-						.append( $('<a>', {
-								'href': '#',
-								'aria-controls': settings.sTableId,
-								'aria-label': aria[ button ],
-								'data-dt-idx': counter,
-								'tabindex': settings.iTabIndex
-							} )
-							.html( btnDisplay )
-						)
-						.appendTo( container );
-
-					settings.oApi._fnBindAction(
-						node, {action: button}, clickHandler
-					);
-
-					counter++;
-				}
-			}
-		}
-	};
-
-	// IE9 throws an 'unknown error' if document.activeElement is used
-	// inside an iframe or frame. 
-	var activeEl;
-
-	try {
-		// Because this approach is destroying and recreating the paging
-		// elements, focus is lost on the select button which is bad for
-		// accessibility. So we want to restore focus once the draw has
-		// completed
-		activeEl = $(host).find(document.activeElement).data('dt-idx');
-	}
-	catch (e) {}
-
-	attach(
-		$(host).empty().html('<ul class="pagination"/>').children('ul'),
-		buttons
-	);
-
-	if ( activeEl !== undefined ) {
-		$(host).find( '[data-dt-idx='+activeEl+']' ).focus();
-	}
-};
-
-
-return DataTable;
-}));
-
-
 /*! AutoFill 2.2.2
  * ©2008-2017 SpryMedia Ltd - datatables.net/license
  */
@@ -16600,51 +16416,7 @@ return AutoFill;
 }));
 
 
-/*! Bootstrap integration for DataTables' AutoFill
- * ©2015 SpryMedia Ltd - datatables.net/license
- */
-
-(function( factory ){
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( ['jquery', 'datatables.net-bs', 'datatables.net-autofill'], function ( $ ) {
-			return factory( $, window, document );
-		} );
-	}
-	else if ( typeof exports === 'object' ) {
-		// CommonJS
-		module.exports = function (root, $) {
-			if ( ! root ) {
-				root = window;
-			}
-
-			if ( ! $ || ! $.fn.dataTable ) {
-				$ = require('datatables.net-bs')(root, $).$;
-			}
-
-			if ( ! $.fn.dataTable.AutoFill ) {
-				require('datatables.net-autofill')(root, $);
-			}
-
-			return factory( $, root, root.document );
-		};
-	}
-	else {
-		// Browser
-		factory( jQuery, window, document );
-	}
-}(function( $, window, document, undefined ) {
-'use strict';
-var DataTable = $.fn.dataTable;
-
-
-DataTable.AutoFill.classes.btn = 'btn btn-primary';
-
-
-return DataTable;
-}));
-
-/*! Buttons for DataTables 1.4.2
+/*! Buttons for DataTables 1.5.1
  * ©2016-2017 SpryMedia Ltd - datatables.net/license
  */
 
@@ -17243,6 +17015,10 @@ $.extend( Buttons.prototype, {
 			button.attr( 'title', text( config.titleAttr ) );
 		}
 
+		if ( config.attr ) {
+			button.attr( config.attr );
+		}
+
 		if ( ! config.namespace ) {
 			config.namespace = '.dt-button-'+(_buttonCounter++);
 		}
@@ -17335,12 +17111,18 @@ $.extend( Buttons.prototype, {
 	 */
 	_keypress: function ( character, e )
 	{
+		// Check if this button press already activated on another instance of Buttons
+		if ( e._buttonsHandled ) {
+			return;
+		}
+
 		var run = function ( conf, node ) {
 			if ( ! conf.key ) {
 				return;
 			}
 
 			if ( conf.key === character ) {
+				e._buttonsHandled = true;
 				$(node).click();
 			}
 			else if ( $.isPlainObject( conf.key ) ) {
@@ -17365,6 +17147,7 @@ $.extend( Buttons.prototype, {
 				}
 
 				// Made it this far - it is good
+				e._buttonsHandled = true;
 				$(node).click();
 			}
 		};
@@ -17772,7 +17555,7 @@ Buttons.defaults = {
 			className: 'dt-button-collection'
 		},
 		button: {
-			tag: 'a',
+			tag: 'button',
 			className: 'dt-button',
 			active: 'active',
 			disabled: 'disabled'
@@ -17789,7 +17572,7 @@ Buttons.defaults = {
  * @type {string}
  * @static
  */
-Buttons.version = '1.4.2';
+Buttons.version = '1.5.1';
 
 
 $.extend( _dtButtons, {
@@ -17800,21 +17583,25 @@ $.extend( _dtButtons, {
 		className: 'buttons-collection',
 		action: function ( e, dt, button, config ) {
 			var host = button;
-			var hostOffset = host.offset();
+			var collectionParent = $(button).parents('div.dt-button-collection');
+			var hostPosition = host.position();
 			var tableContainer = $( dt.table().container() );
 			var multiLevel = false;
+			var insertPoint = host;
 
 			// Remove any old collection
-			if ( $('div.dt-button-background').length ) {
-				multiLevel = $('.dt-button-collection').offset();
+			if ( collectionParent.length ) {
+				multiLevel = $('.dt-button-collection').position();
+				insertPoint = collectionParent;
 				$('body').trigger( 'click.dtb-collection' );
 			}
 
 			config._collection
 				.addClass( config.collectionLayout )
 				.css( 'display', 'none' )
-				.appendTo( 'body' )
+				.insertAfter( insertPoint )
 				.fadeIn( config.fade );
+			
 
 			var position = config._collection.css( 'position' );
 
@@ -17826,29 +17613,29 @@ $.extend( _dtButtons, {
 			}
 			else if ( position === 'absolute' ) {
 				config._collection.css( {
-					top: hostOffset.top + host.outerHeight(),
-					left: hostOffset.left
+					top: hostPosition.top + host.outerHeight(),
+					left: hostPosition.left
 				} );
 
 				// calculate overflow when positioned beneath
 				var tableBottom = tableContainer.offset().top + tableContainer.height();
-				var listBottom = hostOffset.top + host.outerHeight() + config._collection.outerHeight();
+				var listBottom = hostPosition.top + host.outerHeight() + config._collection.outerHeight();
 				var bottomOverflow = listBottom - tableBottom;
 				
 				// calculate overflow when positioned above
-				var listTop = hostOffset.top - config._collection.outerHeight();
+				var listTop = hostPosition.top - config._collection.outerHeight();
 				var tableTop = tableContainer.offset().top;
 				var topOverflow = tableTop - listTop;
 				
 				// if bottom overflow is larger, move to the top because it fits better
 				if (bottomOverflow > topOverflow) {
-					config._collection.css( 'top', hostOffset.top - config._collection.outerHeight() - 5);
+					config._collection.css( 'top', hostPosition.top - config._collection.outerHeight() - 5);
 				}
 
-				var listRight = hostOffset.left + config._collection.outerWidth();
+				var listRight = hostPosition.left + config._collection.outerWidth();
 				var tableRight = tableContainer.offset().left + tableContainer.width();
 				if ( listRight > tableRight ) {
-					config._collection.css( 'left', hostOffset.left - ( listRight - tableRight ) );
+					config._collection.css( 'left', hostPosition.left - ( listRight - tableRight ) );
 				}
 			}
 			else {
@@ -17903,7 +17690,10 @@ $.extend( _dtButtons, {
 		collectionLayout: '',
 		backgroundClassName: 'dt-button-background',
 		autoClose: false,
-		fade: 400
+		fade: 400,
+		attr: {
+			'aria-haspopup': true
+		}
 	},
 	copy: function ( dt, conf ) {
 		if ( _dtButtons.copyHtml5 ) {
@@ -18231,7 +18021,7 @@ DataTable.Api.register( 'buttons.exportInfo()', function ( conf ) {
 	return {
 		filename: _filename( conf ),
 		title: _title( conf ),
-		messageTop: _message(this, conf.messageTop || conf.message, 'top'),
+		messageTop: _message(this, conf.message || conf.messageTop, 'top'),
 		messageBottom: _message(this, conf.messageBottom, 'bottom')
 	};
 } );
@@ -18247,7 +18037,7 @@ DataTable.Api.register( 'buttons.exportInfo()', function ( conf ) {
 var _filename = function ( config )
 {
 	// Backwards compatibility
-	var filename = config.filename === '*' && config.title !== '*' && config.title !== undefined ?
+	var filename = config.filename === '*' && config.title !== '*' && config.title !== undefined && config.title !== null && config.title !== '' ?
 		config.title :
 		config.filename;
 
@@ -18260,7 +18050,7 @@ var _filename = function ( config )
 	}
 
 	if ( filename.indexOf( '*' ) !== -1 ) {
-		filename = $.trim( filename.replace( '*', $('title').text() ) );
+		filename = $.trim( filename.replace( '*', $('head > title').text() ) );
 	}
 
 	// Strip characters which the OS will object to
@@ -18302,7 +18092,7 @@ var _title = function ( config )
 
 	return title === null ?
 		null : title.indexOf( '*' ) !== -1 ?
-			title.replace( '*', $('title').text() || 'Exported data' ) :
+			title.replace( '*', $('head > title').text() || 'Exported data' ) :
 			title;
 };
 
@@ -18402,8 +18192,18 @@ var _exportData = function ( dt, inOpts )
 			return config.format.footer( el ? el.innerHTML : '', idx, el );
 		} ).toArray() :
 		null;
+	
+	// If Select is available on this table, and any rows are selected, limit the export
+	// to the selected rows. If no rows are selected, all rows will be exported. Specify
+	// a `selected` modifier to control directly.
+	var modifier = $.extend( {}, config.modifier );
+	if ( dt.select && typeof dt.select.info === 'function' && modifier.selected === undefined ) {
+		if ( dt.rows( config.rows, $.extend( { selected: true }, modifier ) ).any() ) {
+			$.extend( modifier, { selected: true } )
+		}
+	}
 
-	var rowIndexes = dt.rows( config.rows, config.modifier ).indexes().toArray();
+	var rowIndexes = dt.rows( config.rows, modifier ).indexes().toArray();
 	var selectedCells = dt.cells( rowIndexes, config.columns );
 	var cells = selectedCells
 		.render( config.orthogonal )
@@ -18414,11 +18214,11 @@ var _exportData = function ( dt, inOpts )
 
 	var columns = header.length;
 	var rows = columns > 0 ? cells.length / columns : 0;
-	var body = new Array( rows );
+	var body = [ rows ];
 	var cellCounter = 0;
 
 	for ( var i=0, ien=rows ; i<ien ; i++ ) {
-		var row = new Array( columns );
+		var row = [ columns ];
 
 		for ( var j=0 ; j<columns ; j++ ) {
 			row[j] = config.format.body( cells[ cellCounter ], i, j, cellNodes[ cellCounter ] );
@@ -18476,78 +18276,6 @@ DataTable.ext.feature.push( {
 
 
 return Buttons;
-}));
-
-
-/*! Bootstrap integration for DataTables' Buttons
- * ©2016 SpryMedia Ltd - datatables.net/license
- */
-
-(function( factory ){
-	if ( typeof define === 'function' && define.amd ) {
-		// AMD
-		define( ['jquery', 'datatables.net-bs', 'datatables.net-buttons'], function ( $ ) {
-			return factory( $, window, document );
-		} );
-	}
-	else if ( typeof exports === 'object' ) {
-		// CommonJS
-		module.exports = function (root, $) {
-			if ( ! root ) {
-				root = window;
-			}
-
-			if ( ! $ || ! $.fn.dataTable ) {
-				$ = require('datatables.net-bs')(root, $).$;
-			}
-
-			if ( ! $.fn.dataTable.Buttons ) {
-				require('datatables.net-buttons')(root, $);
-			}
-
-			return factory( $, root, root.document );
-		};
-	}
-	else {
-		// Browser
-		factory( jQuery, window, document );
-	}
-}(function( $, window, document, undefined ) {
-'use strict';
-var DataTable = $.fn.dataTable;
-
-
-$.extend( true, DataTable.Buttons.defaults, {
-	dom: {
-		container: {
-			className: 'dt-buttons btn-group'
-		},
-		button: {
-			className: 'btn btn-default'
-		},
-		collection: {
-			tag: 'ul',
-			className: 'dt-button-collection dropdown-menu',
-			button: {
-				tag: 'li',
-				className: 'dt-button',
-				active: 'active',
-				disabled: 'disabled'
-			},
-			buttonLiner: {
-				tag: 'a',
-				className: ''
-			}
-		}
-	}
-} );
-
-DataTable.ext.buttons.collection.text = function ( dt ) {
-	return dt.i18n('buttons.collection', 'Collection <span class="caret"/>');
-};
-
-
-return DataTable.Buttons;
 }));
 
 
@@ -19912,18 +19640,18 @@ return ColReorder;
 }));
 
 
-/*! FixedColumns 3.2.3
- * ©2010-2016 SpryMedia Ltd - datatables.net/license
+/*! FixedColumns 3.2.4
+ * ©2010-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     FixedColumns
  * @description Freeze columns in place on a scrolling DataTable
- * @version     3.2.3
+ * @version     3.2.4
  * @file        dataTables.fixedColumns.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2010-2016 SpryMedia Ltd.
+ * @copyright   Copyright 2010-2017 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -20415,12 +20143,14 @@ $.extend( FixedColumns.prototype , {
 
 		// When the mouse is down (drag scroll) the mouse controller cannot
 		// change, as the browser keeps the original element as the scrolling one
-		$(this.s.dt.nTableWrapper).on( 'mousedown.DTFC', function () {
-			mouseDown = true;
+		$(this.s.dt.nTableWrapper).on( 'mousedown.DTFC', function (e) {
+			if ( e.button === 0 ) {
+				mouseDown = true;
 
-			$(document).one( 'mouseup', function () {
-				mouseDown = false;
-			} );
+				$(document).one( 'mouseup', function () {
+					mouseDown = false;
+				} );
+			}
 		} );
 
 		// When the body is scrolled - scroll the left and right columns
@@ -20591,13 +20321,17 @@ $.extend( FixedColumns.prototype , {
 				// account of it, but it isn't in any cell
 				if ( that.s.aiOuterWidths.length === 0 ) {
 					border = $(that.s.dt.nTable).css('border-left-width');
-					iWidth += typeof border === 'string' ? 1 : parseInt( border, 10 );
+					iWidth += typeof border === 'string' && border.indexOf('px') === -1 ?
+						1 :
+						parseInt( border, 10 );
 				}
 
 				// Likewise with the final column on the right
 				if ( that.s.aiOuterWidths.length === that.s.dt.aoColumns.length-1 ) {
 					border = $(that.s.dt.nTable).css('border-right-width');
-					iWidth += typeof border === 'string' ? 1 : parseInt( border, 10 );
+					iWidth += typeof border === 'string' && border.indexOf('px') === -1 ?
+						1 :
+						parseInt( border, 10 );
 				}
 
 				that.s.aiOuterWidths.push( iWidth );
@@ -20641,14 +20375,14 @@ $.extend( FixedColumns.prototype , {
 
 		var nSWrapper =
 			$('<div class="DTFC_ScrollWrapper" style="position:relative; clear:both;">'+
-				'<div class="DTFC_LeftWrapper" style="position:absolute; top:0; left:0;">'+
+				'<div class="DTFC_LeftWrapper" style="position:absolute; top:0; left:0;" aria-hidden="true">'+
 					'<div class="DTFC_LeftHeadWrapper" style="position:relative; top:0; left:0; overflow:hidden;"></div>'+
 					'<div class="DTFC_LeftBodyWrapper" style="position:relative; top:0; left:0; overflow:hidden;">'+
 						'<div class="DTFC_LeftBodyLiner" style="position:relative; top:0; left:0; overflow-y:scroll;"></div>'+
 					'</div>'+
 					'<div class="DTFC_LeftFootWrapper" style="position:relative; top:0; left:0; overflow:hidden;"></div>'+
 				'</div>'+
-				'<div class="DTFC_RightWrapper" style="position:absolute; top:0; right:0;">'+
+				'<div class="DTFC_RightWrapper" style="position:absolute; top:0; right:0;" aria-hidden="true">'+
 					'<div class="DTFC_RightHeadWrapper" style="position:relative; top:0; left:0;">'+
 						'<div class="DTFC_RightHeadBlocker DTFC_Blocker" style="position:absolute; top:0; bottom:0;"></div>'+
 					'</div>'+
@@ -20733,8 +20467,8 @@ $.extend( FixedColumns.prototype , {
 		var that = this;
 		var oGrid = this.dom.grid;
 		var iWidth = $(oGrid.wrapper).width();
-		var iBodyHeight = $(this.s.dt.nTable.parentNode).outerHeight();
-		var iFullHeight = $(this.s.dt.nTable.parentNode.parentNode).outerHeight();
+		var iBodyHeight = this.s.dt.nTable.parentNode.offsetHeight;
+		var iFullHeight = this.s.dt.nTable.parentNode.parentNode.offsetHeight;
 		var oOverflow = this._fnDTOverflow();
 		var iLeftWidth = this.s.iLeftWidth;
 		var iRightWidth = this.s.iRightWidth;
@@ -21433,7 +21167,7 @@ FixedColumns.defaults = /** @lends FixedColumns.defaults */{
  *  @default   See code
  *  @static
  */
-FixedColumns.version = "3.2.3";
+FixedColumns.version = "3.2.4";
 
 
 
@@ -23296,14 +23030,14 @@ return KeyTable;
 }));
 
 
-/*! Responsive 2.2.0
+/*! Responsive 2.2.1
  * 2014-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     Responsive
  * @description Responsive tables plug-in for DataTables
- * @version     2.2.0
+ * @version     2.2.1
  * @file        dataTables.responsive.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
@@ -23395,8 +23129,8 @@ var DataTable = $.fn.dataTable;
  */
 var Responsive = function ( settings, opts ) {
 	// Sanity check that we are using DataTables 1.10 or newer
-	if ( ! DataTable.versionCheck || ! DataTable.versionCheck( '1.10.3' ) ) {
-		throw 'DataTables Responsive requires DataTables 1.10.3 or newer';
+	if ( ! DataTable.versionCheck || ! DataTable.versionCheck( '1.10.10' ) ) {
+		throw 'DataTables Responsive requires DataTables 1.10.10 or newer';
 	}
 
 	this.s = {
@@ -23506,10 +23240,12 @@ $.extend( Responsive.prototype, {
 
 			// DataTables will trigger this event on every column it shows and
 			// hides individually
-			dt.on( 'column-visibility.dtr', function (e, ctx, col, vis) {
-				that._classLogic();
-				that._resizeAuto();
-				that._resize();
+			dt.on( 'column-visibility.dtr', function (e, ctx, col, vis, recalc) {
+				if ( recalc ) {
+					that._classLogic();
+					that._resizeAuto();
+					that._resize();
+				}
 			} );
 
 			// Redraw the details box on each draw which will happen if the data
@@ -23545,6 +23281,9 @@ $.extend( Responsive.prototype, {
 			} );
 
 			dt.one( 'draw.dtr', function () {
+				that._resizeAuto();
+				that._resize();
+
 				dt.rows( rowIds ).every( function () {
 					that._detailsDisplay( this, false );
 				} );
@@ -24060,8 +23799,13 @@ $.extend( Responsive.prototype, {
 		$( dt.table().node() ).toggleClass( 'collapsed', collapsedClass );
 
 		var changed = false;
+		var visible = 0;
 
 		dt.columns().eq(0).each( function ( colIdx, i ) {
+			if ( columnsVis[i] === true ) {
+				visible++;
+			}
+
 			if ( columnsVis[i] !== oldVis[i] ) {
 				changed = true;
 				that._setColumnVis( colIdx, columnsVis[i] );
@@ -24076,7 +23820,7 @@ $.extend( Responsive.prototype, {
 
 			// If no records, update the "No records" display element
 			if ( dt.page.info().recordsDisplay === 0 ) {
-				dt.draw();
+				$('td', dt.table().body()).eq(0).attr('colspan', visible);
 			}
 		}
 	},
@@ -24130,7 +23874,8 @@ $.extend( Responsive.prototype, {
 			} )
 			.to$()
 			.clone( false )
-			.css( 'display', 'table-cell' );
+			.css( 'display', 'table-cell' )
+			.css( 'min-width', 0 );
 
 		// Body rows - we don't need to take account of DataTables' column
 		// visibility since we implement our own here (hence the `display` set)
@@ -24610,6 +24355,14 @@ Api.register( 'responsive.hasHidden()', function () {
 		false;
 } );
 
+Api.registerPlural( 'columns().responsiveHidden()', 'column().responsiveHidden()', function () {
+	return this.iterator( 'column', function ( settings, column ) {
+		return settings._responsive ?
+			settings._responsive.s.current[ column ] :
+			false;
+	}, 1 );
+} );
+
 
 /**
  * Version information
@@ -24617,7 +24370,7 @@ Api.register( 'responsive.hasHidden()', function () {
  * @name Responsive.version
  * @static
  */
-Responsive.version = '2.2.0';
+Responsive.version = '2.2.1';
 
 
 $.fn.dataTable.Responsive = Responsive;
@@ -25840,18 +25593,18 @@ return RowReorder;
 }));
 
 
-/*! Scroller 1.4.3
- * ©2011-2017 SpryMedia Ltd - datatables.net/license
+/*! Scroller 1.4.4
+ * ©2011-2018 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * @summary     Scroller
  * @description Virtual rendering for DataTables
- * @version     1.4.3
+ * @version     1.4.4
  * @file        dataTables.scroller.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     www.sprymedia.co.uk/contact
- * @copyright   Copyright 2011-2017 SpryMedia Ltd.
+ * @copyright   Copyright 2011-2018 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -27120,7 +26873,7 @@ Scroller.oDefaults = Scroller.defaults;
  *  @name      Scroller.version
  *  @static
  */
-Scroller.version = "1.4.3";
+Scroller.version = "1.4.4";
 
 
 
@@ -27252,19 +27005,19 @@ return Scroller;
 }));
 
 
-/*! Select for DataTables 1.2.3
- * 2015-2017 SpryMedia Ltd - datatables.net/license/mit
+/*! Select for DataTables 1.2.5
+ * 2015-2018 SpryMedia Ltd - datatables.net/license/mit
  */
 
 /**
  * @summary     Select for DataTables
  * @description A collection of API methods, events and buttons for DataTables
  *   that provides selection options of the items in a DataTable
- * @version     1.2.3
+ * @version     1.2.5
  * @file        dataTables.select.js
  * @author      SpryMedia Ltd (www.sprymedia.co.uk)
  * @contact     datatables.net/forums
- * @copyright   Copyright 2015-2017 SpryMedia Ltd.
+ * @copyright   Copyright 2015-2018 SpryMedia Ltd.
  *
  * This source file is free software, available under the following license:
  *   MIT license - http://datatables.net/license/mit
@@ -27308,7 +27061,7 @@ var DataTable = $.fn.dataTable;
 // Version information for debugger
 DataTable.select = {};
 
-DataTable.select.version = '1.2.3';
+DataTable.select.version = '1.2.5';
 
 DataTable.select.init = function ( dt ) {
 	var ctx = dt.settings()[0];
@@ -27602,8 +27355,16 @@ function enableMouseSelection ( dt )
 
 			// If text was selected (click and drag), then we shouldn't change
 			// the row's selected state
-			if ( window.getSelection && $.trim( window.getSelection().toString() ) ) {
-				return;
+			if ( window.getSelection ) {
+				var selection = window.getSelection();
+
+				// If the element that contains the selection is not in the table, we can ignore it
+				// This can happen if the developer selects text from the click event
+				if ( ! selection.anchorNode || $(selection.anchorNode).closest('table')[0] === dt.table().node() ) {
+					if ( $.trim(selection.toString()) !== '' ) {
+						return;
+					}
+				}
 			}
 
 			var ctx = dt.settings()[0];
@@ -27976,7 +27737,7 @@ $.each( [
 		var data;
 		var out = [];
 
-		if ( selected === undefined ) {
+		if ( selected !== true && selected !== false ) {
 			return indexes;
 		}
 
@@ -28279,12 +28040,29 @@ function namespacedEvents ( config ) {
 	return 'draw.dt.DT'+unique+' select.dt.DT'+unique+' deselect.dt.DT'+unique;
 }
 
+function enabled ( dt, config ) {
+	if ( $.inArray( 'rows', config.limitTo ) !== -1 && dt.rows( { selected: true } ).any() ) {
+		return true;
+	}
+
+	if ( $.inArray( 'columns', config.limitTo ) !== -1 && dt.columns( { selected: true } ).any() ) {
+		return true;
+	}
+
+	if ( $.inArray( 'cells', config.limitTo ) !== -1 && dt.cells( { selected: true } ).any() ) {
+		return true;
+	}
+
+	return false;
+}
+
 var _buttonNamespace = 0;
 
 $.extend( DataTable.ext.buttons, {
 	selected: {
 		text: i18n( 'selected', 'Selected' ),
 		className: 'buttons-selected',
+		limitTo: [ 'rows', 'columns', 'cells' ],
 		init: function ( dt, node, config ) {
 			var that = this;
 			config._eventNamespace = '.select'+(_buttonNamespace++);
@@ -28292,11 +28070,7 @@ $.extend( DataTable.ext.buttons, {
 			// .DT namespace listeners are removed by DataTables automatically
 			// on table destroy
 			dt.on( namespacedEvents(config), function () {
-				var enable = that.rows( { selected: true } ).any() ||
-				             that.columns( { selected: true } ).any() ||
-				             that.cells( { selected: true } ).any();
-
-				that.enable( enable );
+				that.enable( enabled(dt, config) );
 			} );
 
 			this.disable();

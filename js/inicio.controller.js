@@ -49,27 +49,111 @@ var app = {
 			console.log("Se inicio la conexión a la base para web");
 		}
 		crearBD();
+		
+		$("[setPanel]").click(function(){
+			switch($(this).attr("setPanel")){
+				case 'download':
+					panelDownload();
+				break;
+			}
+		});
+		
+		objUsuario = new TUsuario;
+		if (!objUsuario.isLogin())
+			location.href = "index.html";
+		
+		getPlantillas()
+		setTimeout (function(){
+			showCodigos();
+			
+			$("#winCodigo").on('shown.bs.modal', function(){
+				var id = $("#winCodigo").attr("idCodigo");
+				if (id == "" || id == undefined){
+					mensajes.alert({"mensaje": "No se pudo identificar el código"});
+					$("#winCodigo").modal("hide");
+				}else{
+					db.transaction(function(tx){
+						tx.executeSql("select * from codigo where idCode = ?", [id], function(tx, res){
+							var localizacion = res.rows.item(0).localizacion;
+							var factura = res.rows.item(0).factura;
+							
+							$("#selFactura").find("option").remove();
+							$("#selFactura").append('<option value="">Ninguna</option>');
+							tx.executeSql("select * from factura", [], function(tx, res){
+								for(i = 0 ; i < res.rows.length ; i++){
+									var opt = $("<option />", {
+										value: res.rows.item(i).numero,
+										text: res.rows.item(i).numero + " - " + res.rows.item(i).monto
+									});
+									$("#selFactura").append(opt);
+									
+									if (factura == res.rows.item(i).numero)
+										$("#selFactura").val(factura);
+								}
+							});
+							
+							$("#selUbicacion").find("option").remove();
+							$("#selUbicacion").append('<option value="">Ninguna</option>');
+							
+							tx.executeSql("select * from localizacion", [], function(tx, res){
+								for(i = 0 ; i < res.rows.length ; i++){
+									var opt = $("<option />", {
+										value: res.rows.item(i).idLocal,
+										text: res.rows.item(i).nombre
+									});	
+									$("#selUbicacion").append(opt);
+									if (localizacion == res.rows.item(i).idLocal)
+										$("#selUbicacion").val(localizacion);
+								}
+							});
+							
+							$.each(res.rows.item(0), function(key, valor){
+								$("#winCodigo").find("[campo=" + key + "]").html(valor);
+								$("#winCodigo").find("[campo=" + key + "]").val(valor);
+							});
+						}, errorDB);
+					});
+				}
+			});
+			
+			
+			$("#frmCodigo").validate({
+				debug: true,
+				rules: {
+					txtCantidad: "required"
+				},
+				errorElement : 'span',
+				debug: true,
+				messages: {
+					txtNombre: "Este campo es necesario"
+				},
+				submitHandler: function(form){
+					db.transaction(function(tx){
+						tx.executeSql("update codigo set cantidad = ?, factura = ?, localizacion = ? where idCode = ?", [
+								$("#txtCantidad").val(),
+								$("#selFactura").val(),
+								$("#selUbicacion").val(),
+								$("#winCodigo").attr("idCodigo")
+							], 
+						function(tx, res){
+							console.log("Guardado");
+							$("#winCodigo").modal("hide");
+							showCodigos();
+						}, errorDB);
+					});
+		        }
+		
+		    });
+
+			
+		}, 100); 
 	}
 };
 
 //app.initialize();
 
 $(document).ready(function(){
-	app.onDeviceReady();
-	
-	objUsuario = new TUsuario;
-	if (!objUsuario.isLogin())
-		location.href = "index.html";
-			
-	getPlantillas();
-	
-	$("[setPanel]").click(function(){
-		switch($(this).attr("setPanel")){
-			case 'download':
-				panelDownload();
-			break;
-		}
-	});
+	app.onDeviceReady();	
 });
 
 
@@ -81,13 +165,99 @@ function panelDownload(){
 				var modulo = $("[panel=home]");
 				modulo.html("");
 				
-				showPanel("home");
+				$.get(ws_batchcodes, function(resp){
+					var i = 0;
+					db.transaction(function(tx){
+						tx.executeSql("delete from codigo", [], function(tx, res){
+							$.each(resp, function(i, codigo){
+								data = [];
+								data.push(codigo.batch_code);
+								data.push(codigo.part_name);
+								data.push(codigo.quantity);
+								
+								tx.executeSql("INSERT INTO codigo(codigo, nombre, cantidad) VALUES (?, ?, ?)", data, function(tx, res){
+									if (i == resp.length - 1){
+										showCodigos();
+										mensajes.log({"mensaje": "Códigos cargados"});
+									}
+									i++;
+								}, errorDB);
+							});
+						}, errorDB);
+					});
+				}, "json");
 				
-				$.get("http://pruebas-servisum.inquid.co/web/api/v1/inventarios/get-batchcodes", function(resp){
-					var xml = $.parseXML(resp);
-					console.log(xml.find("item"));
-				});
+				$.get(ws_bills, function(resp){
+					var i = 0;
+					db.transaction(function(tx){
+						tx.executeSql("delete from factura", [], function(tx, res){
+							$.each(resp, function(i, codigo){
+								data = [];
+								data.push(codigo.bill_id);
+								data.push(codigo.bill_name);
+								
+								tx.executeSql("INSERT INTO factura(numero, monto) VALUES (?, ?)", data, function(tx, res){
+									if (i == resp.length - 1)
+										mensajes.log({"mensaje": "Facturas cargadas"});
+									i++;
+								}, errorDB);
+							});
+						}, errorDB);
+					});
+				}, "json");
+				
+				$.get(ws_localizations, function(resp){
+					var i = 0;
+					db.transaction(function(tx){
+						tx.executeSql("delete from localizacion", [], function(tx, res){
+							$.each(resp, function(i, codigo){
+								data = [];
+								data.push(codigo.local_id);
+								data.push(codigo.clave);
+								
+								tx.executeSql("INSERT INTO localizacion(idLocal, nombre) VALUES (?, ?)", data, function(tx, res){
+									if (i == resp.length - 1)
+										mensajes.log({"mensaje": "Localizaciones cargadas"});
+									i++;
+								}, errorDB);
+							});
+						}, errorDB);
+					});
+				}, "json");
 			}
 		}
 	});
+}
+
+function showCodigos(){
+	$("[panel=home]").html(plantillas['codigos']);
+	
+	db.transaction(function(tx){
+		tx.executeSql("select * from codigo", [], function(tx, res){
+			for(i = 0 ; i < res.rows.length ; i++){
+				var pl = $(plantillas['itemCodigo']);
+				$.each(res.rows.item(i), function(campo, valor){
+					pl.find("[campo=" + campo + "]").html(valor);
+				});
+				
+				pl.attr("idCodigo", res.rows.item(i).idCode);
+				
+				pl.click(function(){
+					var el = $(this);
+					$("#winCodigo").attr("idCodigo", el.attr("idCodigo"));
+
+					$("#winCodigo").modal();
+				});
+				
+				$("[panel=home]").find("tbody").append(pl);
+				
+				if (i == res.rows.length - 1) 
+					$('#tblCodigos').DataTable({
+						"language": espaniol
+					});
+			}
+		});
+	});
+	
+	showPanel("home");
 }
