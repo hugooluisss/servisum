@@ -46,6 +46,7 @@
 				<div class="modal-footer">
 					<button type="submit" class="btn btn-primary">Guardar cambios</button>
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+					<input type="hidden" id="scaner" name="scaner" value="0" />
 				</div>
 			</div>
 		</div>

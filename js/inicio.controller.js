@@ -142,6 +142,8 @@ var app = {
 							console.log("Guardado");
 							$("#winCodigo").modal("hide");
 							showCodigos();
+							if ($("#scaner").val() == 1)
+								initScan();
 						}, errorDB);
 					});
 		        }
@@ -149,19 +151,7 @@ var app = {
 		    });
 		    
 		    $("#btnCamara").click(function(){
-				cordova.plugins.barcodeScanner.scan(function(result){
-					db.transaction(function(tx){
-						tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
-							if (res.rows.length > 0){
-								$("#winCodigo").attr("idCodigo", res.rows.item(0).idCode);
-								$("#winCodigo").modal();
-							}else
-								mensajes.alert({mensaje: "Código no encontrado"});
-						});
-					});
-				},function(error){
-					alertify.error("Ocurrió un error al leer el código");
-				});
+				initScan();
 			});
 			
 			$("#getCodigos").click(function(){
@@ -186,6 +176,23 @@ $(document).ready(function(){
 	//app.onDeviceReady();	
 });
 
+
+function initScan(){
+	cordova.plugins.barcodeScanner.scan(function(result){
+		db.transaction(function(tx){
+			tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
+				if (res.rows.length > 0){
+					$("#winCodigo").attr("idCodigo", res.rows.item(0).idCode);
+					$("#winCodigo").modal();
+					$("#scaner").val(1);
+				}else
+					mensajes.alert({mensaje: "Código no encontrado"});
+			});
+		});
+	},function(error){
+		alertify.error("Ocurrió un error al leer el código");
+	});
+}
 
 function panelDownload(){
 	mensajes.confirm({
@@ -275,7 +282,7 @@ function showCodigos(){
 				pl.click(function(){
 					var el = $(this);
 					$("#winCodigo").attr("idCodigo", el.attr("idCodigo"));
-
+					$("#scaner").val(0);
 					$("#winCodigo").modal();
 				});
 				
