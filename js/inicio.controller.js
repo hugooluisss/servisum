@@ -169,7 +169,7 @@ var app = {
 			});
 			
 			$("#btnSalir").click(function(){
-				mensajes.confirm("mensajes": "¿Seguro?", "funcion": function(e){
+				mensajes.confirm({"mensajes": "¿Seguro?", "funcion": function(e){
 		    		if(e == 1) {
 			    		window.localStorage.removeItem("sesion");
 			    		location.href = "index.html";
