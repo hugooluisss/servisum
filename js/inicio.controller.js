@@ -55,6 +55,9 @@ var app = {
 				case 'download':
 					panelDownload();
 				break;
+				case 'upload':
+					panelUpload();
+				break;
 			}
 		});
 		
@@ -144,8 +147,22 @@ var app = {
 		        }
 		
 		    });
-
-			
+		    
+		    $("#btnCamara").click(function(){
+				cordova.plugins.barcodeScanner.scan(function(result){
+					db.transaction(function(tx){
+						tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
+							if (res.rows.length > 0){
+								$("#winCodigo").attr("idCodigo", res.rows.item(0).idCode);
+								$("#winCodigo").modal();
+							}else
+								mensajes.alert("Código no encontrado");
+						});
+					});
+				},function(error){
+					alertify.error("Ocurrió un error al leer el código");
+				});
+			});
 		}, 100); 
 	}
 };
@@ -256,8 +273,45 @@ function showCodigos(){
 						"language": espaniol
 					});
 			}
+			
+			if (res.rows.length == 0)
+				$('#tblCodigos').DataTable({
+						"language": espaniol
+					});
 		});
 	});
 	
 	showPanel("home");
+}
+
+function panelUpload(){
+	var modulo = $("[panel=home]");
+	modulo.html("");
+	mensajes.confirm({
+		"mensaje": "Estás por enviar la información al servidor ¿seguro?",
+		"funcion": function(result){
+			if (result == 1){
+				db.transaction(function(tx){
+					tx.executeSql("select * from codigo", [], function(tx, res){
+						var datos = [];
+						for(i = 0 ; i < res.rows.length ; i++){
+							var data = {};
+							
+							data.batch_code = res.rows.item(i).codigo;
+							data.quantity = res.rows.item(i).cantidad;
+							data.local_id = res.rows.item(i).localizacion;
+							data.factura = res.rows.item(i).factura;
+							datos.push(data);
+						}
+						
+						$.post(ws_upload, {
+							"data": JSON.stringify(datos),
+						}, function(result){
+							modulo.html(result);
+						});
+					});
+				});
+			}
+		}
+	});
 }

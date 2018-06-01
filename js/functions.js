@@ -3,6 +3,7 @@ var panelActivo = "";
 var ws_batchcodes = "http://172.10.22.5/curl.php?url=1";
 var ws_bills = "http://172.10.22.5/curl.php?url=2";
 var ws_localizations = "http://172.10.22.5/curl.php?url=3";
+var ws_upload = "http://pruebas-servisum.inquid.co/web/api/v1/inventarios/set-positions";
 
 function showPanel(panel, efecto, after){
 	duracion = 500;
