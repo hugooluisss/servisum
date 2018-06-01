@@ -156,21 +156,34 @@ var app = {
 								$("#winCodigo").attr("idCodigo", res.rows.item(0).idCode);
 								$("#winCodigo").modal();
 							}else
-								mensajes.alert("Código no encontrado");
+								mensajes.alert({mensaje: "Código no encontrado"});
 						});
 					});
 				},function(error){
 					alertify.error("Ocurrió un error al leer el código");
 				});
 			});
+			
+			$("#getCodigos").click(function(){
+				showCodigos();
+			});
+			
+				$("#btnSalir").click(function(){
+					mensajes.confirm("mensajes": "¿Seguro?", function(e){
+			    		if(e == 1) {
+				    		window.localStorage.removeItem("sesion");
+				    		location.href = "index.html";
+				    	}
+			    	});
+				});
 		}, 100); 
 	}
 };
 
-//app.initialize();
+app.initialize();
 
 $(document).ready(function(){
-	app.onDeviceReady();	
+	//app.onDeviceReady();	
 });
 
 
@@ -307,8 +320,8 @@ function panelUpload(){
 						$.post(ws_upload, {
 							"data": JSON.stringify(datos),
 						}, function(result){
-							modulo.html(result);
-						});
+							modulo.html(result.result);
+						}, "json");
 					});
 				});
 			}
