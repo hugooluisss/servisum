@@ -1,0 +1,61 @@
+[modulo="login"] {
+  margin-top: 50px;
+}
+[modulo="login"] .logo {
+  height: 150px;
+  margin-bottom: 30px;
+}
+body[modulo=home] {
+  background: url("../images/logo.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.navbar.navbar-black {
+  background: black;
+}
+.navbar.navbar-red {
+  background: red;
+}
+.navbar .navbar-header {
+  float: left;
+}
+.navbar .navbar-brand {
+  color: white;
+}
+.navbar .right {
+  right: 10px;
+  position: absolute;
+}
+.navbar .iconos {
+  list-style: none;
+  padding-left: 0px;
+}
+.navbar .iconos li {
+  float: left;
+  margin-right: 15px;
+  margin-top: 10px;
+}
+.navbar .iconos li a {
+  color: white;
+}
+.navbar .iconos li i {
+  font-size: 20px;
+}
+table {
+  width: 100%;
+}
+html,
+body {
+  height: 100%;
+}
+html [panel],
+body [panel],
+html [vista],
+body [vista] {
+  display: none;
+  top: 0px;
+  padding-top: 60px;
+  left: 0px;
+}
+
+/*# sourceMappingURL=style.css.map */
