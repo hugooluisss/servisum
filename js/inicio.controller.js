@@ -232,7 +232,7 @@ function initScan(){
 							
 							console.log("Código actualizado");
 						}else
-							mensajes.alert({mensaje: "Código no encontrado": "funcion": function(){
+							mensajes.alert({mensaje: "Código no encontrado", "funcion": function(){
 								initScan();
 							}, "titulo": "Error"});
 					});
