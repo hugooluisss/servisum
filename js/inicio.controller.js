@@ -212,8 +212,9 @@ $(document).ready(function(){
 
 function initScan(){
 	cordova.plugins.barcodeScanner.scan(function(result){
-		db.transaction(function(tx){
-			if (codigosScaneados.indexOf(result.text) == -1){
+		if (codigosScaneados.indexOf(result.text) == -1){
+			console.log("Código escaneado");
+			db.transaction(function(tx){
 				tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
 					if (res.rows.length > 0){
 						tx.executeSql("update codigo set factura = ?, localizacion = ? where idCode = ?", [
@@ -226,17 +227,19 @@ function initScan(){
 							$("#winCodigo").modal("hide");
 							showCodigos();
 						}, errorDB);
+						
+						console.log("Código actualizado");
 					}else
 						mensajes.alert({mensaje: "Código no encontrado"});
 					
 					initScan();
 				});
-				codigosScaneados.push(result.text);
-			}else{
-				mensajes.alert({"mensaje": "Código duplicado"});
-				initScan();
-			}
-		});
+			});
+			codigosScaneados.push(result.text);
+		}else{
+			mensajes.alert({"mensaje": "Código duplicado"});
+			initScan();
+		}		
 	},function(error){
 		showCodigos();
 	});
