@@ -186,6 +186,11 @@ var app = {
 				showCodigos();
 			});
 			
+			$("#btnScanCamera").click(function(){
+				initScan();
+				$("#winScan").modal("hide");
+			});
+			
 			$("#btnSalir").click(function(){
 				mensajes.confirm({"mensaje": "¿Seguro?", "funcion": function(e){
 		    		if(e == 1) {
