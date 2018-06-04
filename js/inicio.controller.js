@@ -19,7 +19,7 @@
 var db = null;
 var objUsuario;
 var plantillas = {};
-var codigosScaneados = {};
+var codigosScaneados = [];
 var app = {
 	// Application Constructor
 	initialize: function() {
@@ -120,7 +120,7 @@ var app = {
 			});
 			
 			$("#winScan").on('shown.bs.modal', function(){
-				codigosScaneados = {};
+				codigosScaneados = [];
 				db.transaction(function(tx){
 					tx.executeSql("select * from factura", [], function(tx, res){
 						for(i = 0 ; i < res.rows.length ; i++){
