@@ -19,7 +19,7 @@
 var db = null;
 var objUsuario;
 var plantillas = {};
-var codigosScaneados = [];
+var codigosScaneados = null;
 var app = {
 	// Application Constructor
 	initialize: function() {
@@ -120,7 +120,7 @@ var app = {
 			});
 			
 			$("#winScan").on('shown.bs.modal', function(){
-				codigosScaneados = [];
+				codigosScaneados = new Array;
 				db.transaction(function(tx){
 					tx.executeSql("select * from factura", [], function(tx, res){
 						for(i = 0 ; i < res.rows.length ; i++){
@@ -212,42 +212,44 @@ $(document).ready(function(){
 
 function initScan(){
 	cordova.plugins.barcodeScanner.scan(function(result){
-		console.info(result);
-		if (codigosScaneados.indexOf(result.text) == -1){
-			console.log("Código escaneado");
-			db.transaction(function(tx){
-				tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
-					if (res.rows.length > 0){
-						tx.executeSql("update codigo set factura = ?, localizacion = ? where idCode = ?", [
-								$("#selFacturaScan").val(),
-								$("#selUbicacionScan").val(),
-								result.text
-							], 
-						function(tx, res){
-							console.log("Guardado");
-							$("#winCodigo").modal("hide");
-							showCodigos();
-						}, errorDB);
+		if (!result.cancelled){
+			if (codigosScaneados.indexOf(result.text) == -1){
+				console.log("Código escaneado");
+				db.transaction(function(tx){
+					tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
+						if (res.rows.length > 0){
+							tx.executeSql("update codigo set factura = ?, localizacion = ? where idCode = ?", [
+									$("#selFacturaScan").val(),
+									$("#selUbicacionScan").val(),
+									result.text
+								], 
+							function(tx, res){
+								console.log("Guardado");
+								$("#winCodigo").modal("hide");
+								showCodigos();
+							}, errorDB);
+							
+							console.log("Código actualizado");
+						}else
+							mensajes.alert({mensaje: "Código no encontrado"});
 						
-						console.log("Código actualizado");
-					}else
-						mensajes.alert({mensaje: "Código no encontrado"});
-					
-					initScan();
+						initScan();
+					});
 				});
-			});
-			console.log(codigosScaneados);
-			codigosScaneados.push(result.text);
-		}else{
-			mensajes.alert({"mensaje": "Código duplicado"});
-			initScan();
-		}		
+				console.log(codigosScaneados);
+				codigosScaneados.push(result.text);
+			}else{
+				mensajes.alert({"mensaje": "Código duplicado"});
+				initScan();
+			}
+		}	
 	},function(error){
 		showCodigos();
 	}, {
 		disabledSuccessBeep: false,
 		prompt: "Scanea tu código",
-		preferFrontCamera: false
+		preferFrontCamera: false,
+		resultDisplayDuration: 1000
 	});
 }
 
