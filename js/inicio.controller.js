@@ -19,7 +19,7 @@
 var db = null;
 var objUsuario;
 var plantillas = {};
-
+var codigosScaneados = {};
 var app = {
 	// Application Constructor
 	initialize: function() {
@@ -119,6 +119,34 @@ var app = {
 				}
 			});
 			
+			$("#winScan").on('shown.bs.modal', function(){
+				codigosScaneados = {};
+				db.transaction(function(tx){
+					tx.executeSql("select * from factura", [], function(tx, res){
+						for(i = 0 ; i < res.rows.length ; i++){
+							var opt = $("<option />", {
+								value: res.rows.item(i).numero,
+								text: res.rows.item(i).numero + " - " + res.rows.item(i).monto
+							});
+							$("#selFacturaScan").append(opt);
+						}
+					});
+					
+					$("#selUbicacionScan").find("option").remove();
+					$("#selUbicacionScan").append('<option value="">Ninguna</option>');
+					
+					tx.executeSql("select * from localizacion", [], function(tx, res){
+						for(i = 0 ; i < res.rows.length ; i++){
+							var opt = $("<option />", {
+								value: res.rows.item(i).idLocal,
+								text: res.rows.item(i).nombre
+							});	
+							$("#selUbicacionScan").append(opt);
+						}
+					});
+				});
+			});
+			
 			
 			$("#frmCodigo").validate({
 				debug: true,
@@ -151,7 +179,7 @@ var app = {
 		    });
 		    
 		    $("#btnCamara").click(function(){
-				initScan();
+				$("#winScan").modal();
 			});
 			
 			$("#getCodigos").click(function(){
@@ -180,17 +208,32 @@ $(document).ready(function(){
 function initScan(){
 	cordova.plugins.barcodeScanner.scan(function(result){
 		db.transaction(function(tx){
-			tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
-				if (res.rows.length > 0){
-					$("#winCodigo").attr("idCodigo", res.rows.item(0).idCode);
-					$("#winCodigo").modal();
-					$("#scaner").val(1);
-				}else
-					mensajes.alert({mensaje: "Código no encontrado"});
-			});
+			if (codigosScaneados.indexOf(result.text) == -1){
+				tx.executeSql("select * from codigo where codigo = ?", [result.text], function(tx, res){
+					if (res.rows.length > 0){
+						tx.executeSql("update codigo set factura = ?, localizacion = ? where idCode = ?", [
+								$("#selFacturaScan").val(),
+								$("#selUbicacionScan").val(),
+								result.text
+							], 
+						function(tx, res){
+							console.log("Guardado");
+							$("#winCodigo").modal("hide");
+							showCodigos();
+						}, errorDB);
+					}else
+						mensajes.alert({mensaje: "Código no encontrado"});
+					
+					initScan();
+				});
+				codigosScaneados.push(result.text);
+			}else{
+				mensajes.alert({"mensaje": "Código duplicado"});
+				initScan();
+			}
 		});
 	},function(error){
-		alertify.error("Ocurrió un error al leer el código");
+		showCodigos();
 	});
 }
 
