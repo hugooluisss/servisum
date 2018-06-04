@@ -243,7 +243,6 @@ function initScan(){
 				mensajes.alert({"mensaje": "Código duplicado", "funcion": function(){
 					initScan();
 				}, "titulo": "Error"});
-				initScan();
 			}
 		}	
 	},function(error){
