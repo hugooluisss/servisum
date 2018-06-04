@@ -221,7 +221,7 @@ function initScan(){
 							tx.executeSql("update codigo set factura = ?, localizacion = ? where idCode = ?", [
 									$("#selFacturaScan").val(),
 									$("#selUbicacionScan").val(),
-									res.rows.item(i).idCode
+									res.rows.item(0).idCode
 								], 
 							function(tx, res){
 								console.log("Guardado");
