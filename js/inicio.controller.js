@@ -212,7 +212,7 @@ $(document).ready(function(){
 
 function initScan(){
 	cordova.plugins.barcodeScanner.scan(function(result){
-		if (result)
+		console.info(result);
 		if (codigosScaneados.indexOf(result.text) == -1){
 			console.log("Código escaneado");
 			db.transaction(function(tx){
