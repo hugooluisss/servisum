@@ -247,7 +247,7 @@ function initScan(){
 	}, {
 		disabledSuccessBeep: false,
 		prompt: "Scanea tu código",
-		preferFrontCamera: true
+		preferFrontCamera: false
 	});
 }
 
