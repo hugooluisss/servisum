@@ -235,6 +235,7 @@ function initScan(){
 					initScan();
 				});
 			});
+			console.log(codigosScaneados);
 			codigosScaneados.push(result.text);
 		}else{
 			mensajes.alert({"mensaje": "Código duplicado"});
