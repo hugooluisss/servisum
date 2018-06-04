@@ -227,19 +227,22 @@ function initScan(){
 								console.log("Guardado");
 								$("#winCodigo").modal("hide");
 								showCodigos();
+								initScan();
 							}, errorDB);
 							
 							console.log("Código actualizado");
 						}else
-							mensajes.alert({mensaje: "Código no encontrado"});
-						
-						initScan();
+							mensajes.alert({mensaje: "Código no encontrado": "funcion": function(){
+								initScan();
+							}, "titulo": "Error"});
 					});
 				});
 				console.log(codigosScaneados);
 				codigosScaneados.push(result.text);
 			}else{
-				mensajes.alert({"mensaje": "Código duplicado"});
+				mensajes.alert({"mensaje": "Código duplicado", "funcion": function(){
+					initScan();
+				}, "titulo": "Error"});
 				initScan();
 			}
 		}	
