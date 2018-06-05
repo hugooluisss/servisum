@@ -36,7 +36,7 @@ TUsuario = function(){
 		}, "json");
 		*/
 		
-		var datos = {};
+		var d = {};
 		d['username'] = datos.usuario;
 		jQuery.ajax({
 			method: 'POST',
