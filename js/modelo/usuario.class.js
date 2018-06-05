@@ -37,11 +37,11 @@ TUsuario = function(){
 		*/
 		
 		var datos = {};
-		datos['username'] = datos.usuario;
+		d['username'] = datos.usuario;
 		jQuery.ajax({
 			method: 'POST',
 			url: ws_login,
-			data: datos,
+			data: d,
 			async: false,
 			headers:{
 			},
