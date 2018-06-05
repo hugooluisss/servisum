@@ -82,11 +82,14 @@ var app = {
 
 //app.initialize();
 
+
 $(document).ready(function(){
+	var datos = {};
+	datos['username'] = "produccion";
 	jQuery.ajax({
 			method: 'POST',
 			url: ws_login,
-			data: '{"username": "produccion"}',
+			data: datos,
 			async: false,
 			headers:{
 			},
