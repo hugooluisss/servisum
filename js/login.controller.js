@@ -85,7 +85,7 @@ var app = {
 
 $(document).ready(function(){
 	var datos = {};
-	datos['username'] = "produccion";
+	datos['username'] = "produccions";
 	jQuery.ajax({
 			method: 'POST',
 			url: ws_login,
