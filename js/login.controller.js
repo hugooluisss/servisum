@@ -85,7 +85,7 @@ var app = {
 
 $(document).ready(function(){
 	var datos = {};
-	datos['username'] = "produccions";
+	datos['username'] = "produccion";
 	jQuery.ajax({
 			method: 'POST',
 			url: ws_login,
@@ -95,7 +95,7 @@ $(document).ready(function(){
 			},
 			beforeSend: function (xhr) {
 				xhr.withCredentials = true;
-				xhr.setRequestHeader ('Authorization', 'Basic ' + btoa("produccion:4rfssvbgt5"));
+				xhr.setRequestHeader ('Authorization', 'Basic ' + btoa("produccion:4rfvbgt5"));
 			},
 			success: function(response){
 				console.log(response);
