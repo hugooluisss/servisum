@@ -80,10 +80,11 @@ var app = {
 	}
 };
 
-//app.initialize();
+app.initialize();
 
 
 $(document).ready(function(){
+	/*
 	var datos = {};
 	datos['username'] = "produccion";
 	jQuery.ajax({
@@ -104,6 +105,6 @@ $(document).ready(function(){
 
     
     console.log('Basic ' + btoa("produccion:4rfvbgt5"));
-    
+    */
 	//app.onDeviceReady();
 });

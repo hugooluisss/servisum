@@ -36,14 +36,26 @@ TUsuario = function(){
 		}, "json");
 		*/
 		
-		$.ajax({
-			method: 'GET',
-			contentType: 'application/json',
+		var datos = {};
+		datos['username'] = datos.usuario;
+		jQuery.ajax({
+			method: 'POST',
 			url: ws_login,
-			data:'data here',
-			beforeSend: function (xhr) {
-				xhr.setRequestHeader ('Authorization', 'Basic xxxx');
+			data: datos,
+			async: false,
+			headers:{
 			},
+			beforeSend: function (xhr) {
+				xhr.withCredentials = true;
+				xhr.setRequestHeader ('Authorization', 'Basic ' + btoa(datos.usuario + ":" + datos.pass));
+			},
+			success: function(response){
+				if (response == true){
+					window.localStorage.setItem("session", btoa("produccion:4rfvbgt5"));
+					if (datos.fn.after !== undefined) datos.fn.after({band: true});
+				}else
+					if (datos.fn.after !== undefined) datos.fn.after({band: false});
+			}
 		});
 	};
 };
