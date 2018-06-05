@@ -203,10 +203,10 @@ var app = {
 	}
 };
 
-app.initialize();
+//app.initialize();
 
 $(document).ready(function(){
-	//app.onDeviceReady();	
+	app.onDeviceReady();	
 });
 
 

@@ -83,5 +83,24 @@ var app = {
 //app.initialize();
 
 $(document).ready(function(){
-	app.onDeviceReady();
+	jQuery.ajax({
+			method: 'POST',
+			url: ws_login,
+			data: '{"username": "produccion"}',
+			async: false,
+			headers:{
+			},
+			beforeSend: function (xhr) {
+				xhr.withCredentials = true;
+				xhr.setRequestHeader ('Authorization', 'Basic ' + btoa("produccion:4rfvbgt5"));
+			},
+			success: function(response){
+				console.log(response);
+			}
+		});
+
+    
+    console.log('Basic ' + btoa("produccion:4rfvbgt5"));
+    
+	//app.onDeviceReady();
 });

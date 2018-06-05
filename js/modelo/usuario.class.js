@@ -13,9 +13,9 @@ TUsuario = function(){
 	this.login = function(datos){
 		if (datos.fn.before !== undefined) datos.fn.before();
 		
-		window.localStorage.setItem("session", true);
+		//window.localStorage.setItem("session", true);
 		
-		if (datos.fn.after !== undefined) datos.fn.after({band: true});
+		//if (datos.fn.after !== undefined) datos.fn.after({band: true});
 				
 		/*
 		$.post(server + 'clogin', {
@@ -35,5 +35,15 @@ TUsuario = function(){
 				datos.fn.after(resp);
 		}, "json");
 		*/
+		
+		$.ajax({
+			method: 'GET',
+			contentType: 'application/json',
+			url: ws_login,
+			data:'data here',
+			beforeSend: function (xhr) {
+				xhr.setRequestHeader ('Authorization', 'Basic xxxx');
+			},
+		});
 	};
 };
