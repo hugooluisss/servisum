@@ -51,10 +51,13 @@ TUsuario = function(){
 			},
 			success: function(response){
 				if (response == true){
-					window.localStorage.setItem("session", btoa("produccion:4rfvbgt5"));
+					window.localStorage.setItem("session", btoa(datos.usuario + ":" + datos.pass));
 					if (datos.fn.after !== undefined) datos.fn.after({band: true});
-				}else
+				}else{
+					alert("False");
 					if (datos.fn.after !== undefined) datos.fn.after({band: false});
+					
+				}
 			}
 		});
 	};
