@@ -420,10 +420,9 @@ function panelUpload(){
 								xhr.withCredentials = true;
 								xhr.setRequestHeader ('Authorization', 'Basic ' + window.localStorage.getItem("session"));
 							},
-							data: {"data": JSON.stringify(datos)},
+							data: {"data": datos},
 							success: function(resp){
-								resp = JSON.parse(resp);
-								modulo.html(result.result);
+								modulo.html(result.name + " -  " + result.message);
 							}
 						});
 					});
