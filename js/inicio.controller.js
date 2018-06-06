@@ -272,7 +272,9 @@ function panelDownload(){
 						xhr.setRequestHeader ('Authorization', 'Basic ' + window.localStorage.getItem("session"));
 					},
 					success: function(resp){
+						console.log(resp);
 						resp = JSON.parse(resp);
+						console.log(resp);
 						var i = 0;
 						db.transaction(function(tx){
 							tx.executeSql("delete from codigo", [], function(tx, res){
@@ -417,7 +419,7 @@ function panelUpload(){
 						
 						jQuery.ajax({
 							method: 'POST',
-							url: ws_localizations,
+							url: ws_upload,
 							async: false,
 							beforeSend: function (xhr) {
 								xhr.withCredentials = true;
