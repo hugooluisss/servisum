@@ -422,7 +422,7 @@ function panelUpload(){
 							},
 							data: {"data": datos},
 							success: function(resp){
-								modulo.html(result.name + " -  " + result.message);
+								modulo.html(result.result);
 							}
 						});
 					});
