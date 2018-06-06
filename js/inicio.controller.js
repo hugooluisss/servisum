@@ -263,65 +263,95 @@ function panelDownload(){
 				var modulo = $("[panel=home]");
 				modulo.html("");
 				
-				$.get(ws_batchcodes, function(resp){
-					var i = 0;
-					db.transaction(function(tx){
-						tx.executeSql("delete from codigo", [], function(tx, res){
-							$.each(resp, function(i, codigo){
-								data = [];
-								data.push(codigo.batch_code);
-								data.push(codigo.part_name);
-								data.push(codigo.quantity);
-								
-								tx.executeSql("INSERT INTO codigo(codigo, nombre, cantidad) VALUES (?, ?, ?)", data, function(tx, res){
-									if (i == resp.length - 1){
-										showCodigos();
-										mensajes.log({"mensaje": "Códigos cargados"});
-									}
-									i++;
-								}, errorDB);
-							});
-						}, errorDB);
-					});
-				}, "json");
+				jQuery.ajax({
+					method: 'POST',
+					url: ws_batchcodes,
+					async: false,
+					beforeSend: function (xhr) {
+						xhr.withCredentials = true;
+						xhr.setRequestHeader ('Authorization', 'Basic ' + window.localStorage.getItem("session"));
+					},
+					success: function(resp){
+						resp = JSON.parse(resp);
+						var i = 0;
+						db.transaction(function(tx){
+							tx.executeSql("delete from codigo", [], function(tx, res){
+								$.each(resp, function(i, codigo){
+									data = [];
+									data.push(codigo.batch_code);
+									data.push(codigo.part_name);
+									data.push(codigo.quantity);
+									
+									tx.executeSql("INSERT INTO codigo(codigo, nombre, cantidad) VALUES (?, ?, ?)", data, function(tx, res){
+										if (i == resp.length - 1){
+											showCodigos();
+											mensajes.log({"mensaje": "Códigos cargados"});
+										}
+										i++;
+									}, errorDB);
+								});
+							}, errorDB);
+						});
+					}
+				});
 				
-				$.get(ws_bills, function(resp){
-					var i = 0;
-					db.transaction(function(tx){
-						tx.executeSql("delete from factura", [], function(tx, res){
-							$.each(resp, function(i, codigo){
-								data = [];
-								data.push(codigo.bill_id);
-								data.push(codigo.bill_name);
-								
-								tx.executeSql("INSERT INTO factura(numero, monto) VALUES (?, ?)", data, function(tx, res){
-									if (i == resp.length - 1)
-										mensajes.log({"mensaje": "Facturas cargadas"});
-									i++;
-								}, errorDB);
-							});
-						}, errorDB);
-					});
-				}, "json");
+				jQuery.ajax({
+					method: 'POST',
+					url: ws_bills,
+					async: false,
+					beforeSend: function (xhr) {
+						xhr.withCredentials = true;
+						xhr.setRequestHeader ('Authorization', 'Basic ' + window.localStorage.getItem("session"));
+					},
+					success: function(resp){
+						resp = JSON.parse(resp);
+						var i = 0;
+						db.transaction(function(tx){
+							tx.executeSql("delete from factura", [], function(tx, res){
+								$.each(resp, function(i, codigo){
+									data = [];
+									data.push(codigo.bill_id);
+									data.push(codigo.bill_name);
+									
+									tx.executeSql("INSERT INTO factura(numero, monto) VALUES (?, ?)", data, function(tx, res){
+										if (i == resp.length - 1)
+											mensajes.log({"mensaje": "Facturas cargadas"});
+										i++;
+									}, errorDB);
+								});
+							}, errorDB);
+						});
+					}
+				});
 				
-				$.get(ws_localizations, function(resp){
-					var i = 0;
-					db.transaction(function(tx){
-						tx.executeSql("delete from localizacion", [], function(tx, res){
-							$.each(resp, function(i, codigo){
-								data = [];
-								data.push(codigo.local_id);
-								data.push(codigo.clave);
-								
-								tx.executeSql("INSERT INTO localizacion(idLocal, nombre) VALUES (?, ?)", data, function(tx, res){
-									if (i == resp.length - 1)
-										mensajes.log({"mensaje": "Localizaciones cargadas"});
-									i++;
-								}, errorDB);
-							});
-						}, errorDB);
-					});
-				}, "json");
+				jQuery.ajax({
+					method: 'POST',
+					url: ws_localizations,
+					async: false,
+					beforeSend: function (xhr) {
+						xhr.withCredentials = true;
+						xhr.setRequestHeader ('Authorization', 'Basic ' + window.localStorage.getItem("session"));
+					},
+					success: function(resp){
+						resp = JSON.parse(resp);
+						var i = 0;
+						db.transaction(function(tx){
+							tx.executeSql("delete from localizacion", [], function(tx, res){
+								$.each(resp, function(i, codigo){
+									data = [];
+									data.push(codigo.local_id);
+									data.push(codigo.clave);
+									
+									tx.executeSql("INSERT INTO localizacion(idLocal, nombre) VALUES (?, ?)", data, function(tx, res){
+										if (i == resp.length - 1)
+											mensajes.log({"mensaje": "Localizaciones cargadas"});
+										i++;
+									}, errorDB);
+								});
+							}, errorDB);
+						});
+					}
+				});
 			}
 		}
 	});
@@ -385,11 +415,20 @@ function panelUpload(){
 							datos.push(data);
 						}
 						
-						$.post(ws_upload, {
-							"data": JSON.stringify(datos),
-						}, function(result){
-							modulo.html(result.result);
-						}, "json");
+						jQuery.ajax({
+							method: 'POST',
+							url: ws_localizations,
+							async: false,
+							beforeSend: function (xhr) {
+								xhr.withCredentials = true;
+								xhr.setRequestHeader ('Authorization', 'Basic ' + window.localStorage.getItem("session"));
+							},
+							data: {"data": JSON.stringify(datos)},
+							success: function(resp){
+								resp = JSON.parse(resp);
+								modulo.html(result.result);
+							}
+						});
 					});
 				});
 			}

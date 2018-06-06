@@ -13,29 +13,6 @@ TUsuario = function(){
 	this.login = function(datos){
 		if (datos.fn.before !== undefined) datos.fn.before();
 		
-		//window.localStorage.setItem("session", true);
-		
-		//if (datos.fn.after !== undefined) datos.fn.after({band: true});
-				
-		/*
-		$.post(server + 'clogin', {
-			"usuario": datos.usuario,
-			"pass": datos.pass, 
-			"action": 'login',
-			"movil": 'true'
-		}, function(resp){
-			if (resp.band == false)
-				console.log(resp.mensaje);
-			else{
-				window.localStorage.setItem("session", resp.datos.usuario);
-				self.idUsuario = resp.datos.idUsuario;
-			}
-				
-			if (datos.fn.after !== undefined)
-				datos.fn.after(resp);
-		}, "json");
-		*/
-		
 		var d = {};
 		d['username'] = datos.usuario;
 		jQuery.ajax({
